@@ -107,30 +107,31 @@ NCSR.to_excel(outfile,sheet_name='N-CSR',index=False)
 
 
 # %%
-## 5. Download a N-CSR file
-filing = NCSR['Filename'][0]
-print(filing)
-
-
-# %%
-## 6. Full url
-filingURL="https://www.sec.gov/Archives/"+filing
-print(filingURL)
-
-
-# %%
-#7. Download the file
-http=urllib3.PoolManager()
-filingText=http.request('GET',filingURL)
-#filingText.data
-
-
-# %%
-# 8. Save the filing
-filename=filingURL.rsplit('/', 1)[-1]
-outfiling = WorkingDir+"filing\\"+filename
-print(outfiling)
-open(outfiling,'wb').write(filingText.data)
+for i in NCSR.index:
+    ## 5. Download a N-CSR file
+    filing = NCSR['Filename'][i]
+    print(filing)
+    
+    
+    # %%
+    ## 6. Full url
+    filingURL="https://www.sec.gov/Archives/"+filing
+    print(filingURL)
+    
+    
+    # %%
+    #7. Download the file
+    http=urllib3.PoolManager()
+    filingText=http.request('GET',filingURL)
+    #filingText.data
+    
+    
+    # %%
+    # 8. Save the filing
+    filename=filingURL.rsplit('/', 1)[-1]
+    outfiling = WorkingDir+"filing\\"+filename
+    print(outfiling)
+    open(outfiling,'wb').write(filingText.data)
 
 """ 
 # %%
