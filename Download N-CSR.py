@@ -67,7 +67,7 @@ import requests
 import sqlite3
 from sqlite3 import Error
 import urllib3
-
+import re
 
 # %%
 #Set up working folder
@@ -133,74 +133,23 @@ for i in NCSR.index:
     print(outfiling)
     open(outfiling,'wb').write(filingText.data)
 
-""" 
-# %%
-filingURL.rsplit('/', 1)[-1]
 
+# %% remove html and xbrl tags
 
-# %%
-### Cannot install edgar package without C++...
+# define a function
+def remove_html_tags(text):
+    """Remove html tags from a string"""
+    import re
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)
 
-from edgar import Company
-company = Company("Oracle Corp", "0001341439")
-tree = company.get_all_filings(filing_type = "10-K")
-docs = Company.get_documents(tree, no_of_documents=5)
-tree
+# %% read in  a filing
+file = open(r"C:\Edgar\filing\0001193125-20-067363.txt",'r')
+str = file.read()
 
+# %% clean it up
+notag = remove_html_tags(str)
 
-# %%
-docs
+kw=re.findall("[^.]*Gamestop[^.]*\.",notag,re.IGNORECASE)
 
-
-# %%
-## SEC API . IO
-##########################
-# Python 3.x Example
-##########################
-
-# package used to execute HTTP POST request to the API
-import json
-import urllib.request
-
-# API Key
-TOKEN = "4940b22a39296c21b420ebc6fadfd036c64971142eb0e2340210a1fc61ef5650" # replace YOUR_API_KEY with the API key you got from sec-api.io after sign up
-# API endpoint
-API = "https://api.sec-api.io?token=" + TOKEN
-
-# define the filter parameters you want to send to the API 
-payload = {
-  "query": { "query_string": { "query": "cik:320193 AND filedAt:{2016-01-01 TO 2016-12-31} AND formType:\"10-Q\"" } },
-  "from": "0",
-  "size": "10",
-  "sort": [{ "filedAt": { "order": "desc" } }]
-}
-
-# format your payload to JSON bytes
-jsondata = json.dumps(payload)
-jsondataasbytes = jsondata.encode('utf-8')   # needs to be bytes
-
-# instantiate the request 
-req = urllib.request.Request(API)
-
-# set the correct HTTP header: Content-Type = application/json
-req.add_header('Content-Type', 'application/json; charset=utf-8')
-# set the correct length of your request
-req.add_header('Content-Length', len(jsondataasbytes))
-
-# send the request to the API
-response = urllib.request.urlopen(req, jsondataasbytes)
-
-# read the response 
-res_body = response.read()
-# transform the response into JSON
-filings = json.loads(res_body.decode("utf-8"))
-
-# print JSON 
-print(filings)
-
-
-# %%
-
-
-
- """
+print(kw)
