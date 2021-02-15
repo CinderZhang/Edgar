@@ -95,7 +95,8 @@ master = master.dropna(axis=0,subset=['CIK','Form Type','Filename'])
 
 # %%
 ## 3. Filter out the N-CSR... forms
-NCSR=master[master['Form Type'].str.contains("N-CSR")]
+#NCSR=master[master['Form Type'].str.contains("N-CSR")]
+NCSR=master[master['Form Type'].str.fullmatch('N-CSR')]
 NCSR.reset_index(inplace=True,drop=True)
 print(NCSR.head())
 
