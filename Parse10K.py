@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
 # To add a new cell, type '# %%'
 # To add a new markdown cell, type '# %% [markdown]'
 # %% [markdown]
 # # <span style="color:navy"> Intro
 # 
 # 
-# In this notebook we will apply REGEX & BeautifulSoup to find useful financial information in 10-Ks. In particular, we will extract text from Items 1A, 7, and 7A of 10-K.
+# In this notebook we will apply REGEX & BeautifulSoup to find useful financial information in 10-Ks. 
+# In particular, we will extract text from Items 1A, 7, and 7A of 10-K.
+# For further processing of the output, see TextProcessingBasic.py.
 # %% [markdown]
 # # <span style="color:navy"> STEP 1 : Import Libraries
 # 
@@ -51,7 +54,9 @@ print(raw_10k[0:1300])
 # %% [markdown]
 # # <span style="color:navy"> STEP 3 : Apply REGEXes to find 10-K Section from the document
 # 
-# For our purposes, we are only interested in the sections that contain the 10-K information. All the sections, including the 10-K are contained within the `<DOCUMENT>` and `</DOCUMENT>` tags. Each section within the document tags is clearly marked by a `<TYPE>` tag followed by the name of the section.
+# For our purposes, we are only interested in the sections that contain the 10-K information. 
+#All the sections, including the 10-K are contained within the `<DOCUMENT>` and `</DOCUMENT>` tags. 
+# Each section within the document tags is clearly marked by a `<TYPE>` tag followed by the name of the section.
 
 # %%
 # Regex to find <DOCUMENT> tags
@@ -135,7 +140,9 @@ for match in matches:
 # %% [markdown]
 # Notice that each item is matched twice. This is because each item appears first in the index and then in the corresponding section. We will now have to remove the matches that correspond to the index. We will do this using Pandas in the next section.
 # %% [markdown]
-# In the code below we will create a pandas dataframe with the following column names: `'item','start','end'`. In the `item` column save the `match.group()` in lower case letters, in the ` start` column save the `match.start()`, and in the `end` column save the ``match.end()`. 
+# In the code below we will create a pandas dataframe with the following column names: `'item','start','end'`. 
+#In the `item` column save the `match.group()` in lower case letters, in the ` start` column save the `match.start()`, 
+#and in the `end` column save the ``match.end()`. 
 
 # %%
 # Matches
@@ -169,7 +176,11 @@ test_df.head()
 # %% [markdown]
 # Remove Duplicates
 # 
-# Now that we have removed all unnecessary characters form our dataframe, we can go ahead and remove the Item matches that correspond to the index. In the code below we will use the Pandas dataframe `.drop_duplicates()` method to only keep the last Item matches in the dataframe and drop the rest. Just as precaution ensure that the `start` column is sorted in ascending order before dropping the duplicates.
+# Now that we have removed all unnecessary characters form our dataframe,
+# we can go ahead and remove the Item matches that correspond to the index. 
+#In the code below we will use the Pandas dataframe `.drop_duplicates()` method to only keep the 
+#last Item matches in the dataframe and drop the rest. Just as precaution ensure that the `start` 
+#column is sorted in ascending order before dropping the duplicates.
 
 # %%
 # Drop duplicates
@@ -193,7 +204,13 @@ pos_dat
 # %% [markdown]
 # <b> Get The Financial Information From Each Item </b>
 # 
-# The above dataframe contains the starting and end index of each match for Items 1A, 7, and 7A. In the code below, we will save all the text from the starting index of `item1a` till the starting index of `item1b` into a variable called `item_1a_raw`. Similarly, save all the text from the starting index of `item7` till the starting index of `item7a` into a variable called `item_7_raw`. Finally,  save all the text from the starting index of `item7a` till the starting of `item8` into a variable called `item_7a_raw`. We can accomplish all of this by making the correct slices of `document['10-K']`.
+# The above dataframe contains the starting and end index of each match for Items 1A, 7, and 7A. 
+#In the code below, we will save all the text from the starting index of `item1a` 
+#till the starting index of `item1b` into a variable called `item_1a_raw`. Similarly,
+# save all the text from the starting index of `item7` till the starting index of `item7a` into 
+# a variable called `item_7_raw`. Finally,  save all the text from the starting index of `item7a`
+# till the starting of `item8` into a variable called `item_7a_raw`. We can accomplish all of this 
+# by making the correct slices of `document['10-K']`.
 
 # %%
 # Get Item 1a
@@ -233,6 +250,42 @@ print(item_1a_content.prettify()[0:1000])
 ### more cleanly, it's basically new line character between sections. 
 print(item_1a_content.get_text("\n\n"))
 
+# %% Save Item 1A
+appl_1a=item_1a_content.get_text("\n\n")
+
+# %%
+
+
+appltxt=open("C:/Users/cinde/Documents/AAPL7a.txt","wt")
+appltxt.write(appl_1a)
+appltxt.close()
+
+
+# %% ITEM 7 and 7a
+item_7a_content = BeautifulSoup(item_7a_raw, 'lxml')
+
+
+# %%
+### By just applying .pretiffy() we see that raw text start to look oragnized, as BeautifulSoup
+### apply indentation according to the HTML Tag tree structure
+print(item_7a_content.prettify()[0:1000])
+
+
+# %%
+### Our goal is though to remove html tags and see the content
+### Method get_text() is what we need, \n\n is optional, I just added this to read text 
+### more cleanly, it's basically new line character between sections. 
+print(item_7a_content.get_text("\n\n"))
+
+# %% Save Item 7a
+appl_7a=item_7a_content.get_text("\n\n")
+
+# %%
+
+
+appltxt=open("C:/Users/cinde/Documents/AAPL7a.txt","wt")
+appltxt.write(appl_7a)
+appltxt.close()
 # %% [markdown]
 # # <span style="color:navy"> Summary...
 # %% [markdown]
