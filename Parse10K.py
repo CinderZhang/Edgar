@@ -43,6 +43,7 @@ import pandas as pd
 # %%
 # Get the HTML data from the 2018 10-K from Apple
 r = requests.get('https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/0000320193-18-000145.txt')
+#https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/0000320193-18-000145.txt
 raw_10k = r.text
 
 # %% [markdown]
